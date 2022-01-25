@@ -11,6 +11,7 @@
         "method-override": "^3.0.0",
         "methods": "^1.1.2",
         "morgan": "^1.10.0",
+        "pg": "^8.7.1",
         "playwright": "^1.18.0",
         "puppeteer": "^13.1.1",
         "xml2json": "^0.12.0"
