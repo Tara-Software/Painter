@@ -57,4 +57,3 @@ async function removePerson(personId) {
 
     await pool.end();
 })();
-
