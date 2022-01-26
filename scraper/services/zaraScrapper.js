@@ -20,9 +20,15 @@ const getTitle = link => {
 
 const getPrice = async link => {
     // get the price from the html
-    var html = await axios.get(link);
-    var $ = cheerio.load(html.data);
-    return $('.price-current__amount').html();
+    try {
+        var html = await axios.get(link);
+        var $ = cheerio.load(html.data);
+        var price = $('.price-current__amount').html();
+    } catch (e) {
+        console.log('error al acceder a:' + link);
+        return null;
+    }
+    return price;
 }
 
 (async () => {
@@ -41,15 +47,18 @@ const getPrice = async link => {
         if (item['loc'] && aux.includes('https://www.zara.com/es/es/')) {
             //get the html 
             const link = item['loc'];
+            
             //construct the final element
             const element = {
                 id: getId(link),
                 title: getTitle(link),
-                price: getPrice(link),
+                price: await getPrice(link),
             }
             // Esto es lo que debería ser
-            console.log(element);
-            elements.push(element);
+            if(element.price) {
+                console.log(element);
+                elements.push(element);
+            }
         };
     }
 
