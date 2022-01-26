@@ -4,6 +4,8 @@ const { JSDOM } = require('jsdom')
 const xml2json = require('xml2json');
 const puppeteer = require('puppeteer');
 const Ropa = require('../models/Ropa');
+const { Cluster } = require("puppeteer-cluster");
+
 var toVisit = [];
 
 var visited = 0;
@@ -16,14 +18,31 @@ const getTitle = link => {
 }
 
 (async () => {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const cluster = await Cluster.launch({
+        concurrency: Cluster.CONCURRENCY_CONTEXT, // 1 browser per context
+        maxConcurrency: 4, // cluster with 4 workers
+    });
 
+    // Define a task for every page
+    await cluster.task(async ({ page, data: url }) => {
+        await page.goto(url);
+        var price = await page.evaluate(() => document.querySelector("#pdpContent span[data-price]").getAttribute("data-price"));
+
+        const element =  {
+            id: getId(url),
+            title: getTitle(url),
+            price: price,
+        }
+        // Esto es lo que debería ser
+        //let element = new Ropa(getTitle(link), getCategory(link), getBrand(link), price);
+        console.log(element);
+    });
+
+    // begin queue task
     const { data } = await axios.get('https://myspringfield.com/sitemap_index.xml');
     var jsonData = xml2json.toJson(data, {object: true});
 
     jsonData.sitemapindex.sitemap.map(( link ) => toVisit.push(link.loc));
-
     while(visited < 1) {
         // console.log("Visiting: " + toVisit[visited]);
         console.log(toVisit[visited]);
@@ -33,27 +52,13 @@ const getTitle = link => {
         const elements = [];
         for (const item of data_items["urlset"]["url"]) {
             if(item["loc"] && item.loc.includes("https://myspringfield.com/es/es")) {
-                const link = item["loc"];
-                await page.goto(link);
-            
-                var price = await page.evaluate(() => document.querySelector("#pdpContent span[data-price]").getAttribute("data-price"));
-        
-                const element =  {
-                    id: getId(link),
-                    title: getTitle(link),
-                    price: price,
-                }
-                // Esto es lo que debería ser
-                //let element = new Ropa(getTitle(link), getCategory(link), getBrand(link), price);
-                console.log(element);
-                elements.push(element);
+                cluster.queue(item["loc"]);
+                // console.log("Queued " + item["loc"]);
             };
         }
-        console.log(elements);
-        
         visited++;
     }
     
-    
-    await browser.close();
+    await cluster.idle();
+    await cluster.close();
 })();
