@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const xml2json = require('xml2json');
-const puppeteer = require('puppeteer');
+const { Cluster } = require("puppeteer-cluster");
 
 const getId = link => {
     // we will use as id the last element of the url
@@ -32,13 +32,25 @@ const getPrice = async link => {
 }
 
 (async () => {
-    const browser = await puppeteer.launch();
+    const cluster = await Cluster.launch({
+        concurrency: Cluster.CONCURRENCY_CONTEXT, // 1 browser per context
+        maxConcurrency: 4, // cluster with 4 workers
+    });
+
+    await cluster.task(async ({ page, data: url }) => {
+        const element = {
+            id: getId(url),
+            title: getTitle(url),
+            price: await getPrice(url),
+        }
+
+        console.log(element);
+    });
+
     // get all clothes items url from zara sitemap
     const zaraItemsURI = 'https://www.zara.com/sitemaps/sitemap-es-es.xml';
     const { data } = await axios.get(zaraItemsURI);
     var jsonData = xml2json.toJson(data, { object: true });
-
-    const elements = [];
 
     // we will go though all URIs
     for (const item of jsonData['urlset']['url']) {
@@ -46,21 +58,9 @@ const getPrice = async link => {
         // if this URI is a zara URI
         if (item['loc'] && aux.includes('https://www.zara.com/es/es/')) {
             //get the html 
-            const link = item['loc'];
-            
-            //construct the final element
-            const element = {
-                id: getId(link),
-                title: getTitle(link),
-                price: await getPrice(link),
-            }
-            // Esto es lo que debería ser
-            if(element.price) {
-                console.log(element);
-                elements.push(element);
-            }
+            cluster.queue(item["loc"]);
         };
     }
-
-    await browser.close();
+    await cluster.idle();
+    await cluster.close();
 })();
