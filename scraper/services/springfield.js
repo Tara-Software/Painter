@@ -3,6 +3,7 @@ const cheerio = require('cheerio');
 const { JSDOM } = require('jsdom')
 const xml2json = require('xml2json');
 const puppeteer = require('puppeteer');
+const Ropa = require('../models/Ropa');
 var toVisit = [];
 
 var visited = 0;
@@ -42,6 +43,8 @@ const getTitle = link => {
                     title: getTitle(link),
                     price: price,
                 }
+                // Esto es lo que debería ser
+                //let element = new Ropa(getTitle(link), getCategory(link), getBrand(link), price);
                 console.log(element);
                 elements.push(element);
             };
