@@ -7,7 +7,12 @@ const registerGender = async (gender) => {
     `;
     const values = [gender.name];
     
-    return pool.query(text, values); 
+    try {
+            return (await pool.query(text, values)).rows[0]["gender_id"];
+    } catch(e) {
+        // console.log(e);
+        return -1;
+    }
 }
 const removeGender = async (gender_id) => {
     const text = `DELETE FROM genders WHERE gender_id = $1`;
@@ -30,10 +35,10 @@ const getGender = async (gender_id) => {
 const getGenderId = async (gender) => {
     const text = `SELECT gender_id FROM genders WHERE name = $1`;
     const values = [gender.name];
-    let response = await pool.query(text, values);
-    if(response.rows[0]["gender_id"]) {
-        return response.rows[0]["gender_id"];
-    } else {
+   
+    try {
+        return (await pool.query(text, values)).rows[0]["gender_id"];
+    } catch(e) {
         return -1;
     }
 }

@@ -7,7 +7,12 @@ const registerBrand = async (brand) => {
     `;
     const values = [brand.name];
     
-    return pool.query(text, values); 
+    try {
+        return (await pool.query(text, values)).rows[0]["brand_id"];
+    } catch(e) {
+        console.log(e)
+        return -1;
+    }
 }
 const removeBrand = async (brand_id) => {
     const text = `DELETE FROM brands WHERE brand_id = $1`;
@@ -30,10 +35,10 @@ const getBrand = async (brand_id) => {
 const getBrandId = async (brand) => {
     const text = `SELECT brand_id FROM brands WHERE name = $1`;
     const values = [brand.name];
-    let response = await pool.query(text, values);
-    if(response.rows[0]["brand_id"]) {
-        return response.rows[0]["brand_id"];
-    } else {
+
+    try {
+        return (await pool.query(text, values)).rows[0]["brand_id"];
+    } catch(e) {
         return -1;
     }
 }
