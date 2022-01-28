@@ -1,9 +1,9 @@
-const pool = require("./config/db");
-const Brand = require("./models/Brand");
+const pool = require("../config/db");
+const Brand = require("../models/Brand");
 const brand = require("./api/brand");
-const Clothes = require("./models/Clothes");
+const Clothes = require("../models/Clothes");
 const clothes = require("./api/clothes");
-const Gender = require("./models/Gender");
+const Gender = require("../models/Gender");
 const gender = require("./api/gender");
 
 (async () => {
