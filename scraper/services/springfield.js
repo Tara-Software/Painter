@@ -63,14 +63,7 @@ const getReference = link => {
         var price = await page.evaluate(() => document.querySelector("#pdpContent span[data-price]").getAttribute("data-price"));
 
         // Esto es lo que debería ser
-        let element = new Clothes(
-            getTitle(url), 
-            await getGender(url), 
-            getCategory(url), 
-            brand_id, 
-            price, 
-            url, 
-            getReference(url));
+        let element = new Clothes(getTitle(url), await getGender(url), getCategory(url), brand_id, price, url, getReference(url));
 
         let clothes_id = await clothesUtil.registerClothes(element);
     
@@ -84,9 +77,10 @@ const getReference = link => {
     var jsonData = xml2json.toJson(data, {object: true});
 
     jsonData.sitemapindex.sitemap.map(( link ) => toVisit.push(link.loc));
-
-    while(visited < 1) {
-        // console.log("Visiting: " + toVisit[visited]);
+    
+    const startTime = new Date().getTime();
+    // Mejorar esto que no me mola
+    while(visited < toVisit.length) {
         console.log(toVisit[visited]);
         const { data } = await axios.get(toVisit[visited]);
         var data_items = xml2json.toJson(data, {object: true});
@@ -94,15 +88,22 @@ const getReference = link => {
         const elements = [];
         for (const item of data_items["urlset"]["url"]) {
             if(item["loc"] && item.loc.includes("https://myspringfield.com/es/es")) {
-                cluster.queue(item["loc"]);
+                
+                // DAVI-33 Saltar enlace porque ya está registrado.
+                let registered = await clothesUtil.isClothesRegistered(item["loc"], getReference(item["loc"]));
+                if(!registered) {
+                    cluster.queue(item["loc"]);
+                }
                 total++;
             };
         }
         visited++;
     }
-    
     await cluster.idle();
+    await cluster.close();
+
     console.log("Links Totales: " + total);
     console.log("Ropas registradas: " + registrados);
-    await cluster.close();
+    console.log(new Date().getTime() - startTime);
+
 })();

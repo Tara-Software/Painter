@@ -32,9 +32,9 @@ const getClothes = async (clothes_id) => {
 
     return pool.query(text, values);
 }
-const isClothesRegistered = async (clothes) => {
-    const text = `SELECT clothes_id FROM clothes WHERE name = $1`;
-    const values = [clothes.name];
+const isClothesRegistered = async (link, reference) => {
+    const text = `SELECT clothes_id FROM clothes WHERE link = $1 AND reference = $2`;
+    const values = [link, reference];
 
     return (await pool.query(text, values)).rowCount > 0;
 }
