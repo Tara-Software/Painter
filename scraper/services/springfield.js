@@ -1,6 +1,5 @@
 const axios = require('axios');
 const xml2json = require('xml2json');
-
 const Clothes = require('../models/Clothes');
 const Brand = require('../models/Brand');
 const Gender = require("../models/Gender");
@@ -40,8 +39,7 @@ const getReference = link => {
 }
 
 (async () => {
-    
-    // get brand_id or register it
+      // get brand_id or register it
     // con el gender pasará lo mismo pero por ahor no me preocupo
     let springfield = new Brand("springfield");
     let brand_id = -1;
@@ -73,14 +71,15 @@ const getReference = link => {
         }
     });
 
+    // begin queue task
     const { data } = await axios.get('https://myspringfield.com/sitemap_index.xml');
     var jsonData = xml2json.toJson(data, {object: true});
 
     jsonData.sitemapindex.sitemap.map(( link ) => toVisit.push(link.loc));
-    
     const startTime = new Date().getTime();
     // Mejorar esto que no me mola
     while(visited < toVisit.length) {
+
         console.log(toVisit[visited]);
         const { data } = await axios.get(toVisit[visited]);
         var data_items = xml2json.toJson(data, {object: true});
@@ -88,8 +87,8 @@ const getReference = link => {
         const elements = [];
         for (const item of data_items["urlset"]["url"]) {
             if(item["loc"] && item.loc.includes("https://myspringfield.com/es/es")) {
-                
-                // DAVI-33 Saltar enlace porque ya está registrado.
+
+              // DAVI-33 Saltar enlace porque ya está registrado.
                 let registered = await clothesUtil.isClothesRegistered(item["loc"], getReference(item["loc"]));
                 if(!registered) {
                     cluster.queue(item["loc"]);
@@ -105,5 +104,4 @@ const getReference = link => {
     console.log("Links Totales: " + total);
     console.log("Ropas registradas: " + registrados);
     console.log(new Date().getTime() - startTime);
-
 })();
