@@ -36,7 +36,10 @@ export async function getStaticProps() {
   text = `SELECT * FROM clothes LIMIT 4`
   res = await pool.query(text, []);
   let clothes: any = [];
-  try { clothes = res.rows; } catch(e) { /* Algo fue mal pues */ }
+  try { clothes = res.rows.map((row) => {
+    row.created_at = row.created_at.getTime();
+    return row;
+  }); } catch(e) { /* Algo fue mal pues */ }
   return {
     props: {
       brands,

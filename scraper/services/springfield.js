@@ -4,24 +4,33 @@ const xml2json = require('xml2json');
 const Clothes = require('../models/Clothes');
 const Brand = require('../models/Brand');
 const Gender = require("../models/Gender");
+const Category = require("../models/Category");
+
 const brandUtil = require("../api/brandUtil");
 const clothesUtil = require("../api/clothesUtil");
 const genderUtil = require("../api/genderUtil");
+const categoryUtil = require('../api/categoryUtil');
 
 const { Cluster } = require("puppeteer-cluster");
 
 var total = 0;
 var registrados= 0;
-
 var toVisit = [];
-
 var visited = 0;
 
 const getTitle = link => {
     return link.split("/").at(-2).replaceAll("-", " ");
 }
-const getCategory = link => {
-    return link.split("/")[6];
+const getCategory = async link => {
+    const res = link.split("/")[6];
+    let category = new Category(res);
+    
+    if(await categoryUtil.isCategoryRegistered(category)) {
+        return await categoryUtil.getCategoryId(category);
+    } else {
+        return await categoryUtil.registerCategory(category);
+    }
+
 }
 const getGender = async link => {
     // supongamos que esto siempre va a ser hombre, mujer o elle
@@ -63,7 +72,7 @@ const getReference = link => {
         var price = await page.evaluate(() => document.querySelector("#pdpContent span[data-price]").getAttribute("data-price"));
 
         // Esto es lo que debería ser
-        let element = new Clothes(getTitle(url), await getGender(url), getCategory(url), brand_id, price, url, getReference(url));
+        let element = new Clothes(getTitle(url), await getGender(url), await getCategory(url), brand_id, price, url, getReference(url));
 
         let clothes_id = await clothesUtil.registerClothes(element);
     

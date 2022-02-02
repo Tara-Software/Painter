@@ -1,12 +1,15 @@
 class Clothes {
-    constructor(name, gender_id, category, brand_id, price, link, reference) {
+    constructor(name, gender_id, category_id, brand_id, price, link, reference) {
         this.name = name.toLowerCase();
         this.gender_id = gender_id;
-        this.category = category; 
+        this.category_id = category_id; 
         this.brand_id = brand_id; 
         this.price = price;
         this.link = link;
-        this.reference = reference;
+        this.store_reference = reference;
+        this.stock = 0;
+        this.description = "";
+        this.size = "L"
     }
 }
 
