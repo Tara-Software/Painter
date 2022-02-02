@@ -1,0 +1,11 @@
+.wrapper {
+    padding: 16px;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    .input {
+        color: #3c3c3c;
+    }
+}

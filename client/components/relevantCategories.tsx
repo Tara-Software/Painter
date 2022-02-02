@@ -1,13 +1,15 @@
+import styles from '../styles/RelevantCategories.module.scss'
+
 export default function relevantCategories() {
     return (
-        <div id="categories-wrapper">
+        <div className={styles.wrapper}>
             <ul>
-                <li className="category">Marcas</li>
-                <li className="category">Zapatos</li>
-                <li className="category">Chaquetas</li>
-                <li className="category">Vestidos</li>
-                <li className="category">Complementos</li>
-                <li className="category">Camisetas</li>
+                <li className={styles.category}>Marcas</li>
+                <li className={styles.category}>Zapatos</li>
+                <li className={styles.category}>Chaquetas</li>
+                <li className={styles.category}>Vestidos</li>
+                <li className={styles.category}>Complementos</li>
+                <li className={styles.category}>Camisetas</li>
             </ul>
         </div>
     )
