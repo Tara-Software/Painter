@@ -6,11 +6,11 @@ import pool from '../lib/db'
 import BrandBanner from '../components/brandbanner'
 import Products from '../components/productList'
 
-const Home: NextPage = ({ brands, clothes }: any) => {
+const Home: NextPage = ({ brands, clothes, categories }: any) => {
   return (
     <>
     <Search />
-    <RelevantCategories />
+    <RelevantCategories categories={categories}/>
     <BrandBanner brand={brands[0]} />
     <Products clothes = {clothes} />
     
@@ -33,21 +33,29 @@ export async function getStaticProps() {
 
   let brands: any = [];
   try { brands = res.rows; } catch(e) { /* Algo fue mal pues */ }
-  text = `SELECT * FROM clothes LIMIT 4`
+  
+  text = `SELECT * FROM clothes LIMIT 4`;
   res = await pool.query(text, []);
   let clothes: any = [];
   try { clothes = res.rows.map((row) => {
     row.created_at = row.created_at.getTime();
     return row;
   }); } catch(e) { /* Algo fue mal pues */ }
+  
+  text = `SELECT * FROM categories LIMIT 6`;
+  res = await pool.query(text, []);
+  let categories = [];
+  try { categories = res.rows; } catch(e) {}
+
   return {
     props: {
       brands,
-      clothes
+      clothes,
+      categories
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in
     // - At most once every 86400 seconds
-    revalidate: 86400, // In seconds
+    revalidate: 86400, // A day in seconds
   }
 }

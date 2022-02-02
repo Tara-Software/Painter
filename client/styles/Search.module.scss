@@ -1,11 +1,36 @@
 .wrapper {
-    padding: 16px;
-    background-color: #f3f3f3;
-    border-radius: 5px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    .input {
-        color: #3c3c3c;
+    gap: 10px;
+    .searchBox {
+        padding: 16px;
+        flex: 1 1 0;
+        background-color: #f3f3f3;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        .input {
+            color: #3c3c3c;
+        }
     }
+    .filterBox {
+        text-align: center;
+        cursor: pointer;
+        .text {
+            font-size: 14px;
+            color: #3c3c3c;
+        }
+    }
+}
+.filterDialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    z-index: 1;
+
+    display: none;
 }

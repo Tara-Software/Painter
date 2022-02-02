@@ -1,15 +1,21 @@
+import Link from 'next/link';
 import styles from '../styles/RelevantCategories.module.scss'
-
-export default function relevantCategories() {
+const capitalize = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+export default function relevantCategories({ categories }: any) {
     return (
         <div className={styles.wrapper}>
             <ul>
-                <li className={styles.category}>Marcas</li>
-                <li className={styles.category}>Zapatos</li>
-                <li className={styles.category}>Chaquetas</li>
-                <li className={styles.category}>Vestidos</li>
-                <li className={styles.category}>Complementos</li>
-                <li className={styles.category}>Camisetas</li>
+                {categories.map((category: any, index: number) => {
+                    return (
+                    <li key={index} className={styles.category}>
+                        <Link href={{pathname: '/find', query: { "c": category.category_id}}}>
+                            <a>{capitalize(category.name)}</a>
+                        </Link>
+                    </li>
+                    )
+                })}
             </ul>
         </div>
     )

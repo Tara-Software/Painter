@@ -1,10 +1,11 @@
+import Link from "next/link";
 import React, { MouseEventHandler, ReactElement } from "react"
 import styles from '../styles/Navbar.module.scss'
 
 const openNav = () => {
     let overlay = document.getElementById(styles.overlay);
     if(overlay) {
-        overlay.style.width = "70%"
+        overlay.style.width = "100%"
         overlay.style.borderRight = "1px solid #f3f3f3";
         overlay.style.boxShadow = "1px 0px 4px 0px rgb(39, 39, 39)";
         
@@ -24,6 +25,7 @@ export default function Navbar() {
         <>
         <nav id={styles.navEnvelope}>
             <div className={styles.burger} onClick={openNav}><img src="/burger.svg" alt="Menú"/></div>
+            <div className={styles.logo}><Link href="/"><a><img src="/logo.svg" alt="Logo" className={styles.logoImg} /></a></Link></div>
             <div className={styles.wrapper}>
                 <ul>
                     <li className={styles.icon}><img src="/heart.svg" alt="Tus favoritos" /></li>
@@ -33,8 +35,8 @@ export default function Navbar() {
             </div>
         </nav>
         <div id={styles.overlay}>
-            <div className={styles.logo}><img src="/logo.svg" alt="Logo" className={styles.logoImg} /></div>
             <div className={styles.close} onClick={closeNav}><img src="/close.svg" alt="" /></div>
+            <div className={styles.logo} onClick={closeNav}><Link href="/"><a><img src="/logo.svg" alt="Logo" className={styles.logoImg} /></a></Link></div>
             <div className={styles.list}>
                 <ul>
                     <li className={styles.item}>Hombre</li>
