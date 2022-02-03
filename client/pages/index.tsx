@@ -5,6 +5,10 @@ import RelevantCategories from '../components/relevantCategories'
 import pool from '../lib/db'
 import BrandBanner from '../components/brandbanner'
 import Products from '../components/productList'
+import { getBrands } from '../lib/brandUtil'
+import { getClothes } from '../lib/clothesUtil'
+import { getCategories } from '../lib/categoryUtil'
+import { QueryBuilder } from '../lib/queryBuilder'
 
 const Home: NextPage = ({ brands, clothes, categories }: any) => {
   return (
@@ -28,24 +32,9 @@ export default Home
 export async function getStaticProps() {
   
   // Quizá añadir un orden del ultimo que se ha modificado
-  let text = `SELECT * FROM brands LIMIT 2`
-  let res = await pool.query(text, []);
-
-  let brands: any = [];
-  try { brands = res.rows; } catch(e) { /* Algo fue mal pues */ }
-  
-  text = `SELECT * FROM clothes LIMIT 4`;
-  res = await pool.query(text, []);
-  let clothes: any = [];
-  try { clothes = res.rows.map((row) => {
-    row.created_at = row.created_at.getTime();
-    return row;
-  }); } catch(e) { /* Algo fue mal pues */ }
-  
-  text = `SELECT * FROM categories LIMIT 6`;
-  res = await pool.query(text, []);
-  let categories = [];
-  try { categories = res.rows; } catch(e) {}
+  const brands: any[] = await getBrands(2);
+  const clothes: any[] = await getClothes(4);
+  const categories: any[] = await getCategories(6);
 
   return {
     props: {
