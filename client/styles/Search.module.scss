@@ -23,14 +23,49 @@
         }
     }
 }
-.filterDialog {
+#filterDialog {
     position: fixed;
     top: 0;
-    left: 0;
+    right: 0;
     height: 100%;
     width: 100%;
     background-color: white;
     z-index: 1;
-
-    display: none;
+    // display: none;
+    .close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        padding: 16px;
+        cursor: pointer;
+    }
+    .filterSection {
+        ul {
+            list-style: none;
+            padding: 10px 0;
+            display: flex;
+            gap: 16px;
+            overflow-y: scroll;
+            -ms-overflow-style: none;
+            &::-webkit-scrollbar {
+              display: none;
+            }
+            .filter {
+                border: #f3f3f3 1px solid;
+                border-radius: 5px;
+                width: fit-content;
+                position: relative;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                .title {
+                    padding: 10px;
+                }
+                &:hover {
+                    background-color: #f3f3f3;
+                }
+            }
+        }
+    }
 }

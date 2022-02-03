@@ -8,10 +8,10 @@ export async function getCategoryIds() {
     
     return res.rows
 }
-export async function getCategories(limit:number) {
+export async function getCategories(limit:number = 0) {
     let text = `SELECT * FROM categories`;
     let values: number[] = []
-    if(limit) {
+    if(limit > 0) {
         text += ` LIMIT $1`
         values = [limit];
     }
@@ -24,7 +24,7 @@ export async function getCategoryName(category_id: number) {
     const values = [category_id];
 
     try {
-        return (await pool.query(text, values)).rows[0];
+        return (await pool.query(text, values)).rows[0].name;
     } catch(e) {
         return "";
     }

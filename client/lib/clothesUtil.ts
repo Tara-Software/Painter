@@ -20,3 +20,13 @@ export async function getClothes(limit:number) {
     const res = await pool.query(text, values);
     return res.rows;
 }
+export async function getSingleClothes(clothes_id: any) {
+    const text = `SELECT * FROM clothes WHERE clothes_id = $1`;
+    const values = [clothes_id];
+
+    try {
+        return (await pool.query(text, values)).rows[0];
+    } catch(e) {
+        return undefined;
+    }
+}

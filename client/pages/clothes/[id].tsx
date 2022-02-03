@@ -1,6 +1,9 @@
 import { createCipheriv } from 'crypto';
 import { useRouter } from 'next/router'
+import { getBrandName } from '../../lib/brandUtil';
+import { getClothesIds, getSingleClothes } from '../../lib/clothesUtil';
 import pool from '../../lib/db';
+import { QueryBuilder } from '../../lib/queryBuilder';
 import styles from '../../styles/Product.module.scss'
 
 export default function Product(props: any) {
@@ -25,22 +28,17 @@ export default function Product(props: any) {
 }
 
 export async function getStaticPaths() {
-    const text = `SELECT clothes_id FROM clothes`;
-    const values: any[] = [];
-
-    const res = await pool.query(text, values);
-    
-    let paths: any[] = [];
-    if(res.rowCount > 0) {
-        res.rows.map((item) => {
-            paths.push({
+    const res = await getClothesIds();
+    const paths = res.map((item: any) => {
+        return(
+            {
                 params : {
                     id: item.clothes_id.toString()
                 }
-            })
-        })
-    }
-
+            }
+        )
+    });
+        
     return {
         paths, 
         fallback: false
@@ -48,20 +46,8 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: any) {
-    let text = `SELECT * FROM clothes WHERE clothes_id = $1`;
-    let values = [params.id];
-
-    let res = await pool.query(text, values);
-    let clothes = res.rows.map((item) => {
-        item.created_at = item.created_at.getTime()
-        return item;
-    })[0];
-
-    text = `SELECT name FROM brands WHERE brand_id = $1`;
-    values = [clothes.brand_id];
-
-    res = await pool.query(text, values);
-    const brand_name = res.rows[0].name
+    const clothes = await getSingleClothes(params.id);
+    const brand_name = await getBrandName(clothes.brand_id);
     return {
         props: {
             id: params.id,
