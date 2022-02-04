@@ -55,7 +55,7 @@
     .filterSection {
         min-width: 100vw;
         ul {
-            
+            flex-wrap: wrap;
             list-style: none;
             padding: 10px 0;
             display: flex;
