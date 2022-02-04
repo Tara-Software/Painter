@@ -28,19 +28,34 @@
     top: 0;
     right: 0;
     height: 100%;
-    width: 100%;
+    width: 0;
     background-color: white;
     z-index: 1;
     // display: none;
+    transition: width 0.3s ease-in;
+    & > * {
+        padding: 0 16px;
+    }
     .close {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        padding: 16px;
-        cursor: pointer;
+        position: relative;
+        width: 100vw;
+        height: 64px;
+        text-align: end;
+        display: block;
+        img {
+            cursor: pointer;
+            top: 32px;
+            right: 32px;
+            position: absolute;
+        }
+    }
+    h2 {
+        min-width: 100vw;
     }
     .filterSection {
+        min-width: 100vw;
         ul {
+            
             list-style: none;
             padding: 10px 0;
             display: flex;
@@ -67,5 +82,8 @@
                 }
             }
         }
+    }
+    button {
+        min-width: max-content;
     }
 }
