@@ -60,7 +60,6 @@ export default function Find(props:any) {
 }
 
 export async function getServerSideProps({ query, resolvedUrl, req }: any) {  
-    // Esto tendrá que ir en un archivo a parte seguramente.
     // BEGIN QUERY BUILDER
     // Query for clothes;
     const filter_names: any[] = [];

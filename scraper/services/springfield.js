@@ -5,11 +5,14 @@ const Clothes = require('../models/Clothes');
 const Brand = require('../models/Brand');
 const Gender = require("../models/Gender");
 const Category = require("../models/Category");
+const Image = require("../models/Image");
+
 
 const brandUtil = require("../api/brandUtil");
 const clothesUtil = require("../api/clothesUtil");
 const genderUtil = require("../api/genderUtil");
 const categoryUtil = require('../api/categoryUtil');
+const imageUtil = require("../api/imageUtil");
 
 const { Cluster } = require("puppeteer-cluster");
 
@@ -67,7 +70,9 @@ const getReference = link => {
     })
     
     // Define a task for every page
-    await cluster.task(async ({ page, data: url }) => {
+    await cluster.task(async ({ page, data }) => {
+        let url = data["loc"];
+        let images = data["image:image"]
         await page.goto(url);
         var price = await page.evaluate(() => document.querySelector("#pdpContent span[data-price]").getAttribute("data-price"));
 
@@ -75,10 +80,15 @@ const getReference = link => {
         let element = new Clothes(getTitle(url), await getGender(url), await getCategory(url), brand_id, price, url, getReference(url));
 
         let clothes_id = await clothesUtil.registerClothes(element);
-    
         if(clothes_id > 0) {
             registrados++;
             console.log(element.name + " registrado. ID - " + clothes_id);
+
+             // Guardar imágenes
+             for(let img of images) {
+                let image_element = new Image(clothes_id, img["image:loc"], img["image:title"]);
+                await imageUtil.registerImage(image_element);
+            }
         }
     });
 
@@ -96,16 +106,18 @@ const getReference = link => {
         
         const elements = [];
         for (const item of data_items["urlset"]["url"]) {
+            
             if(item["loc"] && item.loc.includes("https://myspringfield.com/es/es")) {
-                
                 // DAVI-33 Saltar enlace porque ya está registrado.
                 let registered = await clothesUtil.isClothesRegistered(item["loc"], getReference(item["loc"]));
                 if(!registered) {
-                    cluster.queue(item["loc"]);
+                    cluster.queue(item);
                 }
                 total++;
+                break;
             };
         }
+        break;
         visited++;
     }
     await cluster.idle();
