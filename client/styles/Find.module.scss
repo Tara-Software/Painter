@@ -1,0 +1,26 @@
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .filter {
+        border: #f3f3f3 1px solid;
+        border-radius: 5px;
+        width: fit-content;
+        position: relative;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        .title {
+            padding: 10px;
+        }
+        .close {
+            margin-left: auto;
+            height: 10px;
+            width: 10px;
+            background-size: cover;
+            margin-right: 10px;
+        }
+    }
+    
+}

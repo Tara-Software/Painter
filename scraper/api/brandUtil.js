@@ -1,4 +1,4 @@
-const pool = require("../config/db");
+const { pool } = require("../config/db");
 
 const registerBrand = async (brand) => {
     const text = `INSERT INTO brands (name)

@@ -14,3 +14,13 @@ a {
 * {
   box-sizing: border-box;
 }
+main {
+  padding: 0 16px;
+}
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+.active {
+  border: 1px solid black !important;
+}
