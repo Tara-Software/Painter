@@ -30,6 +30,7 @@ export default Home
 // datos incluso
 // La movida que me preocupa es que se pueden hacer llamadas a la DB desde aquí
 // Y es mejor eso que llamadas a fuera.
+
 export async function getStaticProps() {
   
   // Quizá añadir un orden del ultimo que se ha modificado
