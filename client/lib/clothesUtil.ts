@@ -9,7 +9,7 @@ export async function getClothesIds() {
     return res.rows
 }
 
-export async function getClothes(limit:number) {
+export async function getClothes(limit:number = 99) {
     let text = `SELECT * FROM clothes`;
     let values: number[] = []
     if(limit) {

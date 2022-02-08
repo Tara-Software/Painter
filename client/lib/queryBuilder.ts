@@ -34,8 +34,15 @@ export class QueryBuilder {
     getValues() {
         return this.values;
     }
+    limit(limit : number) {
+        if(this.values.length > 0) {
+            this.closeParenthesis();
+        }
+        this.text += ` LIMIT $${this.values.length + 1}`;
+        this.values.push(limit)
+    }
     async query() {
-        this.closeParenthesis();
+        
         try {
          
             return (await pool.query(this.text, this.values)).rows;

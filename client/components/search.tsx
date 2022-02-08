@@ -115,7 +115,7 @@ export default function Search(props: any) {
                         </ul>
                     </section>
                 ))}
-                <div><button onClick={() => router.push(buildURL())}>Aplicar filtros</button></div>
+                <div className={styles.submit}><button onClick={() => router.push(buildURL())}>Aplicar filtros</button></div>
             </div>
         }
         </>

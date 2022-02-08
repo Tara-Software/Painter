@@ -1,0 +1,17 @@
+.wrapper {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    white-space: nowrap;
+    max-height: 70vh;
+    li {
+        display: inline-block;
+        margin-right: 10px;
+        zoom: 1;
+        scroll-snap-align: start;
+        width: 100%;
+        img {
+            width: 100vw;
+        }
+    }
+}

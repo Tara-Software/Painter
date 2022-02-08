@@ -11,7 +11,7 @@ export default function relevantCategories({ categories }: any) {
                     return (
                     <li key={index} className={styles.category}>
                         <Link href={{pathname: '/find', query: { "c": category.category_id}}}>
-                            <a>{capitalize(category.name)}</a>
+                            <a>{capitalize(category.name).split("-")[0]}</a>
                         </Link>
                     </li>
                     )

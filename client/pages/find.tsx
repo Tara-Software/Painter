@@ -5,6 +5,7 @@ import Search from "../components/search";
 import { getBrandName, getBrands } from "../lib/brandUtil";
 import { getCategories, getCategoryName } from "../lib/categoryUtil";
 import { getGenderName, getGenders } from "../lib/genderUtil";
+import { getImagesFromClothes } from "../lib/imageUtil";
 import { QueryBuilder } from "../lib/queryBuilder";
 import styles from '../styles/Find.module.scss'
 
@@ -47,14 +48,14 @@ export default function Find(props:any) {
                 {props.filters.map((filter: any, index:number) => {
                 return (
                     <li key={index} className={styles.filter} onClick={() => {removeFilter(filter.property, filter.value)}}>
-                        <span className={styles.title}>{filter.name}</span>
+                        <span className={styles.title}>{filter.name.split("-")[0]}</span>
                         <div className={styles.close} style={{backgroundImage: 'url(/close.svg)'}}></div>
                     </li>
                 )
                 })}
             </ul>
         }
-            <Products clothes={props.clothes} />
+            <Products clothes={props.clothes} images={props.images} />
         </>
     )
 }
@@ -123,8 +124,13 @@ export async function getServerSideProps({ query, resolvedUrl, req }: any) {
             }
         }
     }
+    dQ.limit(20);
     let clothes = await dQ.query();
-    console.log(dQ.toString());
+    // Query for img
+    let images: any = {};
+    for (let c of clothes) {
+        images[c.clothes_id] = (await getImagesFromClothes(c.clothes_id))
+    }
     
     const brands: any[] = await getBrands();
     const categories: any[] = await getCategories();
@@ -132,6 +138,7 @@ export async function getServerSideProps({ query, resolvedUrl, req }: any) {
     
     return {props: {
         clothes: clothes, 
+        images,
         filters: filter_names, 
         url: `http://${req.headers.host}${resolvedUrl}`,
         filterOptions: [

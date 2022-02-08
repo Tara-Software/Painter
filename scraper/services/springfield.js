@@ -114,10 +114,8 @@ const getReference = link => {
                     cluster.queue(item);
                 }
                 total++;
-                break;
             };
         }
-        break;
         visited++;
     }
     await cluster.idle();

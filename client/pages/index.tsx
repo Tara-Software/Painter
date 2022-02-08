@@ -9,14 +9,15 @@ import { getBrands } from '../lib/brandUtil'
 import { getClothes } from '../lib/clothesUtil'
 import { getCategories } from '../lib/categoryUtil'
 import { QueryBuilder } from '../lib/queryBuilder'
+import { getImagesFromClothes } from '../lib/imageUtil'
 
-const Home: NextPage = ({ brands, clothes, categories }: any) => {
+const Home: NextPage = ({ brands, clothes, categories, images }: any) => {
   return (
     <>
-    <Search />
+    <Search url={'http://localhost:3000'} />
     <RelevantCategories categories={categories}/>
     <BrandBanner brand={brands[0]} />
-    <Products clothes = {clothes} />
+    <Products clothes = {clothes} images={images} />
     
     </>
   )
@@ -35,12 +36,16 @@ export async function getStaticProps() {
   const brands: any[] = await getBrands(2);
   const clothes: any[] = await getClothes(4);
   const categories: any[] = await getCategories(6);
-
+  let images: any = {};
+  for (let c of clothes) {
+    images[c.clothes_id] = (await getImagesFromClothes(c.clothes_id))
+  }
   return {
     props: {
       brands,
       clothes,
-      categories
+      categories,
+      images
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in

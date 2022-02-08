@@ -39,11 +39,11 @@ export default function Navbar() {
             <div className={styles.logo} onClick={closeNav}><Link href="/"><a><img src="/logo.svg" alt="Logo" className={styles.logoImg} /></a></Link></div>
             <div className={styles.list}>
                 <ul>
-                    <li className={styles.item}>Hombre</li>
-                    <li className={styles.item}>Mujer</li>
-                    <li className={styles.item}>Complementos</li>
-                    <li className={styles.item}>Marcas</li>
-                    <li className={styles.item}>Toda la ropa</li>
+                    <li className={styles.item} onClick={closeNav}><Link href={{pathname: "/find", query: {"g": "1"}}}>Hombre</Link></li>
+                    <li className={styles.item} onClick={closeNav}><Link href={{pathname: "/find", query: {"g": "2"}}}>Mujer</Link></li>
+                    <li className={styles.item} onClick={closeNav}><Link href={{pathname: "/find", query: {"g": "1"}}}>Complementos</Link></li>
+                    <li className={styles.item} onClick={closeNav}><Link href={{pathname: "/find", query: {"g": "1"}}}>Marcas</Link></li>
+                    <li className={styles.item} onClick={closeNav}><Link href={{pathname: "/find", }}>Toda la ropa</Link></li>
                 </ul>
             </div>
             <div className={styles.settings}>
