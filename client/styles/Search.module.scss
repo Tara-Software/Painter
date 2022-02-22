@@ -12,6 +12,13 @@
         gap: 16px;
         .input {
             color: #3c3c3c;
+            font-size: 16px;
+            border: 0;
+            width: 100%;
+            background-color: transparent;
+            &:focus-visible {
+                outline-width: 0 !important;
+            }
         }
     }
     .filterBox {
@@ -24,6 +31,8 @@
     }
 }
 #filterDialog {
+    overflow: scroll;
+    padding: 1em 0;
     position: fixed;
     top: 0;
     right: 0;
@@ -54,21 +63,33 @@
     }
     .filterSection {
         min-width: 100vw;
+        .align {
+            display: flex;
+            gap: 1em;
+            span {
+                transition: transform 0.1s linear;
+                display: flex;
+                justify-content: center;
+                img {
+                    width: 15px;
+                }
+            }
+        }
         ul {
-            flex-wrap: wrap;
+            max-height: 50px;
             list-style: none;
-            padding: 10px 0;
             display: flex;
             gap: 16px;
             overflow-y: scroll;
             -ms-overflow-style: none;
+            transition: max-height 0.3s ease-in;
             &::-webkit-scrollbar {
               display: none;
             }
             .filter {
                 border: #f3f3f3 1px solid;
                 border-radius: 5px;
-                width: fit-content;
+                white-space: nowrap;
                 position: relative;
                 font-size: 14px;
                 display: flex;

@@ -15,14 +15,40 @@
     }
     .info {
         margin: 0 16px;
+        .sizes{
+            display: flex;
+            gap: 10px;
+            .size {
+                padding: 6px 12px;
+                border: 1px solid gray;
+                border-radius: 2px;
+                &.disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    user-select: none;
+                }
+            }
+        }
     }
     .overlay {
         min-height: 50px;
         width: 100%;
         background-color: white;
-        .price {
-            font-size: 20px;
-            padding: 16px 16px 0;
+        .prices {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-left: 16px;
+            gap: 10px;
+            .original_price {
+                font-size: 20px;
+                color: red;
+                text-decoration: line-through;
+            }
+            .price {
+                font-size: 20px;
+                
+            }
         }
         button {
             margin: 16px;

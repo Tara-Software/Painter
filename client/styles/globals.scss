@@ -24,3 +24,10 @@ ul {
 .active {
   border: 1px solid black !important;
 }
+.expand {
+  max-height: 1000px !important;
+  flex-wrap: wrap;
+}
+.up {
+  transform: rotate(180deg);
+}

@@ -45,7 +45,12 @@ const getBrandId = async (brand) => {
 const isBrandRegistered = async (brand) => {
     return (await getBrandId(brand)) > 0;
 }
+const getDictionary = async () => {
+    const text = `SELECT name from brands`;
+    const res = (await pool.query(text, [])).rows.map((item) => item.name);
 
+    return res;
+}
 module.exports =  {
-    registerBrand, removeBrand, updateBrandName, getBrand, getBrandId, isBrandRegistered
+    registerBrand, removeBrand, updateBrandName, getBrand, getBrandId, isBrandRegistered, getDictionary
 };

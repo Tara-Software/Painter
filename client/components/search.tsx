@@ -15,6 +15,7 @@ const showDialog = () => {
         dialog.style.width = "100%"
     }
 }
+
 export default function Search(props: any) {
     // TODO: Añadir método de búsqueda
     
@@ -36,11 +37,12 @@ export default function Search(props: any) {
     }, [props.url]);
 
 
-    const buildURL = () => {    
+    const buildURL = () => {  
+        url.searchParams.delete("b");
+        url.searchParams.delete("c");
+        url.searchParams.delete("g");  
         options.map((item: any) => {
-            if(!url.searchParams.getAll(item.property).includes(item.id.toString())) {
-                url.searchParams.append(item.property, item.id);
-            }
+            url.searchParams.append(item.property, item.id);
         });
         closeDialog();
         setUrl(url)
@@ -54,6 +56,7 @@ export default function Search(props: any) {
             id: id
         }
         let isOption: boolean = options.some((v:any) => v.property == filterOption.property && v.id == filterOption.id);
+
         if(isOption) {
             title.classList.remove("active");
             setOptions(options.filter((value: any) => {
@@ -64,16 +67,27 @@ export default function Search(props: any) {
             if(!options.some((v:any) => v.id == filterOption.id && v.property == filterOption.property)) {
                 setOptions(options.concat(filterOption));
             }
-        } 
+        }
+    }
+    function toggleFullUl(e: any, index: number): void {
+        var section : HTMLElement= e.target.parentElement.parentElement;
+        var rotate: HTMLElement = section.getElementsByTagName("span")[1];
+        var ul: HTMLElement= section.getElementsByTagName("ul")[0];
+        if(rotate) {
+            rotate.classList.toggle("up");
+        }
+        if(ul) {
+            ul.classList.toggle("expand");
+        }
     }
 
     return (
         <>
         <div className={styles.wrapper}>
-        <div className={styles.searchBox} >
+        <label className={styles.searchBox} >
             <div className={styles.logo}><img src="/lupa.svg" alt="Imagen de una lupa" /></div>
-            <div className={styles.input}><span className={styles.label}>Encuentra tu nuevo outfit</span></div>
-        </div>
+            <input className={styles.input} placeholder='Encuentra tu nuevo outfit' />
+        </label>
         {props.filterBox && 
             <div className={styles.filterBox} onClick={showDialog}>
                 <img src="/filter.svg" alt="Filtrar" />
@@ -88,7 +102,7 @@ export default function Search(props: any) {
                 <h2 className={styles.dialogTitle}>Filtrar los resultados</h2>
                 {props.options.map((option: any, index: number) => (
                     <section key={index} className={styles.filterSection}>
-                        <p>Filtro por {option.name}</p>
+                        <div className={styles.align} onClick={(e): any => toggleFullUl(e, index)}><span>Filtro por {option.name}</span><span><img src="/arrow.svg"></img></span></div>
                         <ul>
                             {option.values.map((item: any, index: number) =>{
                                 let id: string;
