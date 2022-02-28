@@ -46,6 +46,20 @@ const isCategoryRegistered = async (category) => {
     return (await getCategoryId(category)) > 0;
 }
 
+const getDictionary = async () => {
+    const text = `SELECT name FROM categories`;
+    try {
+        const res = (await pool.query(text, [])).rows;
+        let categories = [];
+        res.map((item) => {
+            categories.push(item.name);
+        });
+        return categories;
+        
+    } catch (error) {
+        return [];
+    }
+}
 module.exports =  {
-    registerCategory, removeCategory, updateCategoryName, getCategory, getCategoryId, isCategoryRegistered
+    registerCategory, removeCategory, updateCategoryName, getCategory, getCategoryId, isCategoryRegistered, getDictionary
 };

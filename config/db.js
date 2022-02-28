@@ -1,5 +1,7 @@
-import { Pool } from 'pg';
+require('dotenv').config();
+const { Pool } = require('pg');
 
+// POSTGRESQL
 const credentials = {
     user: "davi", 
     host: "localhost", 
@@ -9,4 +11,4 @@ const credentials = {
 }
 const pool = new Pool(credentials);
 
-export default pool
+module.exports = { pool };

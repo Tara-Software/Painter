@@ -14,6 +14,7 @@ CREATE TABLE "clothes" (
 	"name" TEXT NOT NULL,
 	"description" TEXT,
 	"price" FLOAT NOT NULL,
+	"sale_price" TEXT,
 	"size" TEXT NOT NULL,
 	"link" TEXT NOT NULL,
 	"stock" TEXT,
@@ -45,7 +46,7 @@ CREATE TABLE "images" (
 	"clothes_id" integer NOT NULL,
 	"url" TEXT NOT NULL,
 	"title" TEXT NOT NULL,
-	CONSTRAINT "images_pk" PRIMARY KEY ("image_id")
+	CONSTRAINT "images_pk" PRIMARY KEY ("image_id") 
 ) WITH (
   OIDS=FALSE
 );
