@@ -10,7 +10,7 @@ const registerGender = async (gender) => {
     try {
             return (await pool.query(text, values)).rows[0]["gender_id"];
     } catch(e) {
-        // console.log(e);
+        console.log(e);
         return -1;
     }
 }
