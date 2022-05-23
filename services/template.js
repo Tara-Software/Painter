@@ -1,3 +1,4 @@
+const gunzip = require('gunzip-file')
 const axios = require('axios');
 const xml2json = require('xml2json');
 const Clothes = require('../models/Clothes');
@@ -14,22 +15,14 @@ const imageUtil = require("../api/imageUtil");
 
 const { Cluster } = require("puppeteer-cluster");
 
-
-
-/**
- * IMPORTANTE
- * Los datos universales se encuentran en la variable window.universal_variable.product
- * **/
-
 var total = 0;
 var registrados= 0;
 var toVisit = [];
 var visited = 0;
-const getCategory = async (link, dict) => {
-    const res = link.split("/")[6].split("-")[0];
-    let category = new Category(res);
-    category.includeInDictionary(dict);
-    
+
+const getCategory = async () => {
+    var category;
+
     if(await categoryUtil.isCategoryRegistered(category)) {
         return await categoryUtil.getCategoryId(category);
     } else {
@@ -37,45 +30,38 @@ const getCategory = async (link, dict) => {
     }
 
 }
-const getGender = async link => {
-    // supongamos que esto siempre va a ser hombre, mujer o elle
-    let gender = link.split("/")[5].split("-")[0];
-    if(gender != "mujer" && gender != "hombre") {
-        gender = "mujer";
-    }
-    const gender_anonimo = new Gender(gender);
-    if(await genderUtil.isGenderRegistered(gender_anonimo)) {
-        return await genderUtil.getGenderId(gender_anonimo);
+const getGender = async () => {
+    
+    var gender;
+    if(await genderUtil.isGenderRegistered(gender)) {
+        return await genderUtil.getGenderId(gender);
     } else {
-        return await genderUtil.registerGender(gender_anonimo);
+        return await genderUtil.registerGender(gender);
     }
 }
-const getReference = link => {
-    return "SP-" + link.split("/").at(-1).replaceAll(".html", "");
-}
-const getBrand = async brand => {
-    const brand_s = brand.toLowerCase().trim();
-    const b = new Brand(brand_s);
-    if(await brandUtil.isBrandRegistered(b)) {
-        return await brandUtil.getBrandId(b);
+
+const getBrand = async () => {
+    var brand;
+    if(await brandUtil.isBrandRegistered(brand)) {
+        return await brandUtil.getBrandId(brand);
     } else {
-        return await brandUtil.registerBrand(b);
+        return await brandUtil.registerBrand(brand);
     }
 }
+
+// Store link
+const getReference = () => {
+    return ""
+}
+
+// Begin scraping
 (async () => {
-    // Categorias locas 
+    // Valores disponibles por defecto (categorías, marcas);
     const dictCategories = await categoryUtil.getDictionary();
     var dictBrands = await brandUtil.getDictionary();
-    // get brand_id or register it
-    // con el gender pasará lo mismo pero por ahor no me preocupo
-    let springfield = new Brand("springfield");
-    let brand_id = -1;
-    if(await brandUtil.isBrandRegistered(springfield)) {
-        brand_id = await brandUtil.getBrandId(springfield);
-    } else {
-        brand_id = await brandUtil.registerBrand(springfield);
-    }
     
+    let brand = new Brand("")
+
     // Inicializo cluster.
     const cluster = await Cluster.launch({
         concurrency: Cluster.CONCURRENCY_CONTEXT, // 1 browser per worker
@@ -89,40 +75,19 @@ const getBrand = async brand => {
         await page.goto(url);
         var results = await page.evaluate(() => {
             var res = {};
-            res["brand"] = document.querySelector("#pdpContent h2").innerText;
-            res["title"] = document.querySelector("#pdpContent h1").innerText
-            res["price"] = document.querySelector("#pdpContent span[data-price]").getAttribute("data-price");
+            // EJEMPLO: document.querySelector("#pdpContent h2").innerText;
+            res["brand"] = "";
+            res["title"] = "";
+            res["price"] = "";
             res["description"] = "";
-            for(let s of document.querySelectorAll("#pdpDescription")) {
-                res.description += s.innerText.replaceAll("...", "").trim();
-            }
-            let original_price = document.querySelector("#pdpContent .js-list-price");
-            if(original_price) {
-                res["original_price"] = original_price.innerText;
-            } else {
-                res["original_price"] = -1;
-            }
+            res["original_price"] = 0
             res["images"] = [];
-            try {
-                let img_container = document.querySelectorAll(".js-images-container img");
-                for(let i of img_container) {
-                    res["images"].push(i.src);
-                }
-            } catch (error) {
-            }
             res["sizes"] = [];
-            try {
-                let sizes = document.querySelector(".js-size-selector");
-                if(sizes) {
-                    for (let size of sizes.querySelectorAll(".gi-sizes-mobile")) {
-                        res["sizes"].push({size: size.getAttribute("data-size-id"), disabled: size.disabled});
-                    }
-                }
-            } catch (error) {
-            }
+
             return res;
         });
-        // Esto es lo que debería ser
+        // Una vez se obtienen los datos de la pagina, se añaden a la BBDD
+
         let element = new Clothes(
             results["title"], 
             await getGender(url), 
@@ -138,7 +103,6 @@ const getBrand = async brand => {
 
         let clothes_id = await clothesUtil.registerClothes(element);
 
-        dictBrands = brandUtil.getDictionary();
         //let clothes_id = -1;
         if(clothes_id > 0) {
             registrados++;
@@ -154,15 +118,17 @@ const getBrand = async brand => {
     });
 
     // begin queue task
-    const { data } = await axios.get('https://myspringfield.com/sitemap_index.xml');
+    // https://myspringfield.com/sitemap_index.xml
+    const xml_sitemap = '';
+    const { data } = await axios.get(xml_sitemap);
     var jsonData = xml2json.toJson(data, {object: true});
 
-    jsonData.sitemapindex.sitemap.map(( link ) => toVisit.push(link.loc));
+    // jsonData.sitemapindex.sitemap.map(( link ) => toVisit.push(link.loc));
+
     const startTime = new Date().getTime();
 
     while(visited < toVisit.length) {
 
-        console.log(toVisit[visited]);
         const { data } = await axios.get(toVisit[visited]);
         var data_items = xml2json.toJson(data, {object: true});
         
@@ -182,7 +148,7 @@ const getBrand = async brand => {
     }
     await cluster.idle();
     await cluster.close();
-
+ 
     console.log("Links Totales: " + total);
     console.log("Ropas registradas: " + registrados);
     console.log(new Date().getTime() - startTime);

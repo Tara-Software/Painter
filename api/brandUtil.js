@@ -5,7 +5,7 @@ const registerBrand = async (brand) => {
         VALUES ($1)
         RETURNING brand_id
     `;
-    const values = [brand.name];
+    const values = [brand.name.toLowerCase()];
     
     try {
         return (await pool.query(text, values)).rows[0]["brand_id"];
@@ -34,7 +34,7 @@ const getBrand = async (brand_id) => {
 }
 const getBrandId = async (brand) => {
     const text = `SELECT brand_id FROM brands WHERE name = $1`;
-    const values = [brand.name];
+    const values = [brand.name.toLowerCase()];
 
     try {
         return (await pool.query(text, values)).rows[0]["brand_id"];
